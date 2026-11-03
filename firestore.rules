@@ -1,0 +1,35 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Public visitors may only CREATE a well-formed enquiry.
+    // Nobody can read, update or delete from the client — the owner
+    // reviews enquiries in the Firebase console (or via Admin SDK).
+    match /enquiries/{enquiryId} {
+      allow read, update, delete: if false;
+      allow create: if isValidEnquiry(request.resource.data);
+    }
+
+    function isValidEnquiry(d) {
+      let fields = ['name', 'email', 'phone', 'company', 'subject', 'message', 'createdAt', 'status'];
+      return d.keys().hasOnly(fields)
+        && d.keys().hasAll(fields)
+        && d.name is string && d.name.size() >= 2 && d.name.size() <= 80
+        && d.email is string && d.email.size() <= 254
+        && d.email.matches('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$')
+        && d.phone is string && d.phone.size() >= 10 && d.phone.size() <= 20
+        && d.phone.matches('^\\+?[0-9\\s()-]+$')
+        && d.company is string && d.company.size() <= 100
+        && d.subject is string && d.subject.size() >= 3 && d.subject.size() <= 120
+        && d.message is string && d.message.size() >= 1 && d.message.size() <= 2000
+        && d.createdAt == request.time
+        && d.status == 'New';
+    }
+
+    // Everything else is closed.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

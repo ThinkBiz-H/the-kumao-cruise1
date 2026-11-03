@@ -1,0 +1,182 @@
+@import '@fontsource-variable/fraunces/opsz.css';
+@import '@fontsource-variable/fraunces/opsz-italic.css';
+@import '@fontsource-variable/work-sans/index.css';
+@import 'tailwindcss';
+
+/* ------------------------------------------------------------------
+   Design tokens — carried over 1:1 from the original stylesheet,
+   plus two text-safe accents so dark mode keeps AA contrast.
+------------------------------------------------------------------ */
+@theme {
+  --breakpoint-md: 55rem; /* 880px — the original's single collapse point */
+
+  --font-sans: 'Work Sans Variable', 'Work Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-display: 'Fraunces Variable', 'Fraunces', Georgia, 'Times New Roman', serif;
+
+  --color-pine: #1f4d3a;
+  --color-pine-dark: #153629;
+  --color-terracotta: #c1553a;
+  --color-terracotta-dark: #a3432c;
+  --color-sky: #4a7fa6;
+  --color-gold: #e8a33d;
+  --color-gold-dark: #d18f2b;
+  --color-gold-light: #f0b04e;
+  --color-sage: #7ea36b;
+  --color-rose: #d67aa0;
+
+  --color-cream: #faf3e8;
+  --color-cream-2: #f2e8d8;
+  --color-ink: #241f19;
+  --color-ink-soft: #5a5248;
+  --color-line: rgb(36 31 25 / 0.12);
+
+  /* Accent text that stays legible on both themes */
+  --color-accent: #a3432c;
+  --color-pine-text: #1f4d3a;
+
+  /* Contact band */
+  --color-contact: #241f19;
+  --color-contact-muted: #cbc2b3;
+  --color-stay-muted: #cfe0d5;
+
+  --radius-xs: 3px;
+  --radius-card: 6px;
+
+  --shadow-card: 0 1px 2px rgb(36 31 25 / 0.06), 0 12px 28px -12px rgb(36 31 25 / 0.22);
+  --shadow-lift: 0 2px 4px rgb(36 31 25 / 0.08), 0 22px 40px -16px rgb(36 31 25 / 0.32);
+  --shadow-header: 0 6px 24px -14px rgb(36 31 25 / 0.35);
+
+  /* Hero slideshow drift: covers the ~6.6s a slide is on screen, then holds. */
+  --animate-ken-burns: ken-burns 7s linear forwards;
+  --animate-spin-fast: spin 0.7s linear infinite;
+
+  @keyframes ken-burns {
+    from {
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+    to {
+      transform: translate3d(-1%, -0.6%, 0) scale(1.08);
+    }
+  }
+}
+
+@layer base {
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+      --color-cream: #1a1712;
+      --color-cream-2: #22201a;
+      --color-ink: #f2ece1;
+      --color-ink-soft: #c9c0b0;
+      --color-line: rgb(242 236 225 / 0.14);
+      --color-accent: #e98a6f;
+      --color-pine-text: #8fc4a6;
+      --color-contact: #22201a;
+    }
+  }
+
+  :root[data-theme='dark'] {
+    --color-cream: #1a1712;
+    --color-cream-2: #22201a;
+    --color-ink: #f2ece1;
+    --color-ink-soft: #c9c0b0;
+    --color-line: rgb(242 236 225 / 0.14);
+    --color-accent: #e98a6f;
+    --color-pine-text: #8fc4a6;
+    --color-contact: #22201a;
+  }
+
+  :root {
+    background: var(--color-cream);
+    color-scheme: light dark;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(78px + env(safe-area-inset-top, 0px));
+    -webkit-text-size-adjust: 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    margin: 0;
+    min-height: 100%;
+    background: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    color: var(--color-ink);
+    margin: 0;
+    letter-spacing: -0.01em;
+    font-optical-sizing: auto;
+    text-wrap: balance;
+  }
+
+  p {
+    line-height: 1.7;
+    color: var(--color-ink-soft);
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  img {
+    max-width: 100%;
+    display: block;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background: var(--color-gold);
+    color: #241f19;
+  }
+}
+
+@layer components {
+  /* The original rainbow stripe band, rendered exactly as before. */
+  .stripe-band {
+    width: 100%;
+    background: linear-gradient(
+      90deg,
+      var(--color-terracotta),
+      var(--color-gold),
+      var(--color-sage),
+      var(--color-sky),
+      var(--color-rose),
+      var(--color-pine)
+    );
+    background-size: 600% 100%;
+  }
+
+  .hero-overlay {
+    background: linear-gradient(to right, rgb(12 10 8 / 0.72), rgb(12 10 8 / 0.42), rgb(12 10 8 / 0.55));
+  }
+
+  .card-scrim {
+    background: linear-gradient(0deg, rgb(0 0 0 / 0.58), transparent 60%);
+  }
+}
